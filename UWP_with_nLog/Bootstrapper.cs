@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog;
+using NLog.Common;
 using NLog.Config;
 using NLog.Extensions.Logging;
 using NLog.Targets;
@@ -61,12 +62,17 @@ namespace UWP_with_nLog
             var fileTarget = new FileTarget("App.log")
             {
                 FileName = fullPath,
-                Layout = "${longdate} ${uppercase:${level}} ${message} ${exception}"
+                Layout = "${longdate} ${uppercase:${level}} ${message} ${exception}",
+                ConcurrentWrites = false
             };
             config.AddTarget(fileTarget);
             config.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, "App.log");
 
             LogManager.Configuration = config;
+
+            // Add internal logging.
+            InternalLogger.LogFile = folder.Path + @"\Logs\internal.nLog.log";
+            InternalLogger.LogLevel = NLog.LogLevel.Trace;
         }
     }
 }
